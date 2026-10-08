@@ -46,17 +46,23 @@ def synthetic_profiles(n_homes=40, n_days=60):
 
 
 def load_lcl(path):
-    """Read 'Smart meters in London' (Low Carbon London) half-hourly CSV."""
+    """Read 'Smart meters in London' half-hourly CSV.
+
+    Works with both common layouts:
+      LCLid, stdorToU, DateTime, KWH/hh (per half hour)   (original LCL files)
+      LCLid, tstp, energy(kWh/hh)                         (Kaggle block files)
+    """
     df = pd.read_csv(path)
     df.columns = [c.strip() for c in df.columns]
-    kwh = [c for c in df.columns if c.lower().startswith("kwh")][0]
+    kwh = [c for c in df.columns if "kwh" in c.lower()][0]
     time = [c for c in df.columns if c.lower() in ("datetime", "tstp")][0]
     df[kwh] = pd.to_numeric(df[kwh], errors="coerce")
     df[time] = pd.to_datetime(df[time])
     df["day"] = df[time].dt.date
     df["slot"] = df[time].dt.hour * 2 + df[time].dt.minute // 30
     wide = df.pivot_table(index=["LCLid", "day"], columns="slot",
-                          values=kwh, aggfunc="mean").dropna()
+                          values=kwh, aggfunc="mean")
+    wide = wide.reindex(columns=range(48)).dropna()  # keep complete days only
     wide = wide.reset_index().rename(columns={"LCLid": "home"})
     return wide[["home", "day", *range(48)]]
 

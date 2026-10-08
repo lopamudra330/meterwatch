@@ -33,9 +33,9 @@ Smart meters send energy readings every 30 minutes. When communication or the de
 ```bash
 pip install -r requirements.txt
 python meterwatch.py                          # demo data
-python meterwatch.py --data LCL-June2015v2_0.csv   # real London data
+python meterwatch.py --data block_0.csv     # real London data
 ```
-Real data: [Smart Meters in London (Low Carbon London)](https://www.kaggle.com/datasets/jeanmidev/smart-meters-in-london). Use any half-hourly block file.
+Real data: [Smart Meters in London (Low Carbon London)](https://www.kaggle.com/datasets/jeanmidev/smart-meters-in-london). Use any half-hourly file, e.g. `halfhourly_dataset/block_0.csv` (about 50 homes). Both the Kaggle layout (`tstp`, `energy(kWh/hh)`) and the original LCL layout (`DateTime`, `KWH/hh`) are supported.
 
 ## Next steps
 - Run on the real London dataset
